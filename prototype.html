@@ -1,0 +1,477 @@
+<title>Leerregistratie Circuleather</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Opzet: een kop met rolkeuze, daaronder een korte menubalk en één werkgebied. Eerst een startscherm met wat er nu te doen is. */
+:root{
+  --bg:#fbfbf9; --surface:#ffffff; --surface2:#efefea; --fg:#1f1f1c; --muted:#5f5f58; --line:#c9c9c0;
+  --accent:#1d5a3f; --accent-fg:#ffffff; --accent-soft:#e3eee7;
+  --good:#1d6b3a; --good-soft:#e3f1e7; --warn:#8a5200; --warn-soft:#fbefd5; --bad:#a8231b; --bad-soft:#fbe4e1; --info:#24508f; --info-soft:#e4ecf8;
+  --font-body:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-mono:ui-monospace,Menlo,Consolas,monospace;
+  --c-groen:#3f6b4a; --c-lichtbruin:#b98a5e; --c-blauw:#3b5c8a; --c-donkerbruin:#4a2f20; --c-zwart:#1c1c1c; --c-afwijkend:#a05a8c;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171715; --surface:#1f1f1c; --surface2:#2a2a26; --fg:#ecece6; --muted:#a9a9a0; --line:#45453f;
+  --accent:#6cc79a; --accent-fg:#0b1a12; --accent-soft:#223329;
+  --good:#7fd69b; --good-soft:#1e3326; --warn:#f0b455; --warn-soft:#3a2e14; --bad:#ff958c; --bad-soft:#3f1f1c; --info:#8db6f2; --info-soft:#1d2b45; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171715; --surface:#1f1f1c; --surface2:#2a2a26; --fg:#ecece6; --muted:#a9a9a0; --line:#45453f;
+  --accent:#6cc79a; --accent-fg:#0b1a12; --accent-soft:#223329;
+  --good:#7fd69b; --good-soft:#1e3326; --warn:#f0b455; --warn-soft:#3a2e14; --bad:#ff958c; --bad-soft:#3f1f1c; --info:#8db6f2; --info-soft:#1d2b45; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.5;
+  padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:960px;margin:0 auto}
+h1,h2,h3{line-height:1.25;margin:0}
+h2{font-size:1.4rem;margin-bottom:6px}h3{font-size:1.1rem;margin-bottom:4px}
+p{margin:0}
+.top{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;justify-content:space-between;padding:20px 0 12px;border-bottom:3px solid var(--accent)}
+.brand b{font-size:1.4rem}
+.brand span{display:block;color:var(--muted);font-size:.9rem}
+.roles{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.roles .who{color:var(--muted);font-size:.9rem;margin-right:2px}
+.roles button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;padding:8px 14px;border-radius:4px;cursor:pointer;min-height:44px}
+.roles button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
+.tabs{display:flex;gap:18px;overflow-x:auto;margin:6px 0 20px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:transparent;color:var(--muted);font:inherit;padding:12px 2px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px;min-height:44px}
+.tabs button[aria-selected="true"]{color:var(--fg);font-weight:600;border-bottom-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--info);outline-offset:2px}
+.banner{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:.9rem;padding:8px 0}
+.grid{display:grid;gap:28px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.panel{min-width:0;margin-bottom:26px}
+.panel>h3{margin-bottom:2px}.panel>.sub{color:var(--muted);font-size:.92rem;margin-bottom:12px}
+.facts{width:100%;margin:4px 0 22px}
+.facts td{padding:8px 0;border-bottom:1px solid var(--line)}
+.facts td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:1.1rem}
+.facts small{display:block;color:var(--muted);font-weight:400;font-size:.82rem}
+label{display:block;font-weight:600;font-size:.92rem;margin-bottom:4px}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--surface);border:1.5px solid #8b8b82;border-radius:3px;padding:9px 11px;width:100%;min-height:44px}
+input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--accent);flex:none}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin-bottom:12px;cursor:pointer}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
+.row>*{flex:1 1 150px;min-width:0}
+.btn{font:inherit;font-weight:600;border:2px solid var(--accent);border-radius:4px;padding:10px 18px;min-height:44px;cursor:pointer;background:var(--accent);color:var(--accent-fg)}
+.btn.sec{background:transparent;color:var(--accent)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:.9rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.link{background:none;border:0;color:var(--accent);padding:6px 0;min-height:0;text-decoration:underline;font-weight:500}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th{text-align:left;color:var(--fg);font-weight:700;padding:8px 10px 8px 0;border-bottom:2px solid var(--fg);white-space:nowrap}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.code{font-family:var(--font-mono);font-weight:600}
+.chip{white-space:nowrap;font-weight:600}
+.chip::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--muted);margin-right:7px}
+.chip.good::before{background:var(--good)}.chip.warn::before{background:var(--warn)}.chip.bad::before{background:var(--bad)}.chip.info::before{background:var(--info)}
+.sw{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:7px;border:1px solid rgba(128,128,128,.6)}
+.notice{padding:10px 14px;margin:0 0 14px;border-left:5px solid var(--line);background:var(--surface2)}
+.notice.bad{border-left-color:var(--bad);background:var(--bad-soft)}
+.notice.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.notice.good{border-left-color:var(--good);background:var(--good-soft)}
+.muted{color:var(--muted)}.small{font-size:.88rem}
+.todo{list-style:none;margin:10px 0 26px;padding:0;border-top:1px solid var(--line)}
+.todo li{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:1.05rem}
+.todo li span{flex:1 1 280px}
+.stack{display:flex;height:26px;border:1px solid var(--line)}
+.stack i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:.88rem}
+.bar{display:grid;grid-template-columns:110px 1fr 70px;gap:10px;align-items:center;margin:6px 0;font-size:.9rem}
+.bar .t{height:12px;background:var(--surface2)}.bar .t i{display:block;height:100%;background:var(--accent)}
+.label-card{display:flex;gap:16px;align-items:center;border:2px dashed var(--line);padding:14px;margin-top:16px}
+.label-card svg{width:92px;height:92px;flex:none;background:#fff;padding:4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:4px;z-index:20;max-width:92vw}
+details{margin-top:28px;border-top:1px solid var(--line);padding-top:8px}summary{cursor:pointer;font-weight:600;padding:6px 0}
+pre{background:var(--surface2);padding:10px;overflow-x:auto;font-family:var(--font-mono);font-size:.8rem;margin:8px 0 0}
+ol.demo{margin:8px 0 0;padding-left:20px}ol.demo li{margin:4px 0}
+@media (max-width:560px){.bar{grid-template-columns:90px 1fr 60px}.todo li{font-size:1rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="wrap" id="app"></div>
+<script>
+"use strict";
+/* ============ Datamodel (conform informatiemodel ERD) ============ */
+const KEY="leerregistratie-circuleather-v2";
+const KLEUREN=[["K1","groen"],["K2","lichtbruin"],["K3","blauw"],["K4","donkerbruin"],["K5","zwart"],["K6","afwijkend"]];
+const MATEN=["S","M","L","XL","afwijkend"];
+const day=86400000;
+const iso=d=>new Date(d).toISOString().slice(0,10);
+const today=()=>iso(Date.now());
+const plus=(n,from)=>iso((from?new Date(from).getTime():Date.now())+n*day);
+function seed(){
+  const t=n=>plus(-n);
+  return {
+    halls:[{hal_id:"H1",naam:"Ontmantelingshal Gouda",plaats:"Gouda"},{hal_id:"H2",naam:"Ontmantelingshal Breda",plaats:"Breda"},{hal_id:"H3",naam:"Ontmantelingshal Almere",plaats:"Almere"}],
+    ritten:[{rit_id:"R1",hal_id:"H1",geplande_datum:t(9),werkelijke_datum:t(9),status:"Afgerond"}],
+    bigbags:[
+      {bigbag_id:"BB-0001",hal_id:"H1",rit_id:"R1",datum_gevuld:t(11),status:"Verwerkt"},
+      {bigbag_id:"BB-0002",hal_id:"H2",rit_id:null,datum_gevuld:t(3),status:"Onderweg"},
+      {bigbag_id:"BB-0003",hal_id:"H3",rit_id:null,datum_gevuld:t(2),status:"Ophaalverzoek"},
+      {bigbag_id:"BB-0004",hal_id:"H1",rit_id:null,datum_gevuld:t(1),status:"Gevuld"}],
+    verwerkingen:[{verwerking_id:"V1",bigbag_id:"BB-0001",start_datum:t(5),einde_datum:t(2),bruto_kg:42.0,netto_kg:29.3,uitval_kg:6.7,snijafval_kg:6.0,status:"Afgerond"}],
+    uitval:[
+      {uitval_id:"U1",verwerking_id:"V1",bestemming_id:"B2",categorie:"vies",gewicht_kg:3.2},
+      {uitval_id:"U2",verwerking_id:"V1",bestemming_id:"B3",categorie:"nep",gewicht_kg:1.1},
+      {uitval_id:"U3",verwerking_id:"V1",bestemming_id:"B2",categorie:"beschadigd",gewicht_kg:2.4},
+      {uitval_id:"U4",verwerking_id:"V1",bestemming_id:"B1",categorie:"snijafval",gewicht_kg:6.0}],
+    bestemmingen:[{bestemming_id:"B1",naam:"Snijafval: naar magazijn Circuleather, bestemming nog open",type:"open"},{bestemming_id:"B2",naam:"Vies of beschadigd leer: naar Circuleather, bestemming nog open",type:"open"},{bestemming_id:"B3",naam:"Nepleer: naar Circuleather, terugkoppeling aan de hal",type:"open"},{bestemming_id:"B4",naam:"Verdacht leer: apart, wacht op test",type:"apart"}],
+    toetsen:[],
+    opdrachten:[{opdracht_id:"MO-001",verwerking_id:"V1",bigbag_id:"BB-0001",taak:"Afval en stapels weg, volgende big bag brengen",volgende_bigbag:"BB-0002",aangemaakt:t(2),uitgevoerd:t(2),status:"Uitgevoerd"}],
+    kleuren:KLEUREN.map(([kleur_id,naam])=>({kleur_id,naam})),
+    stapels:[
+      {stapel_id:"ST-0001",verwerking_id:"V1",kleur_id:"K1",maat:"M",dikte_mm:1.2,aantal_stukken:14,gewicht_kg:8.4,locatie:"Schap A1",status:"In magazijn"},
+      {stapel_id:"ST-0002",verwerking_id:"V1",kleur_id:"K2",maat:"L",dikte_mm:1.4,aantal_stukken:9,gewicht_kg:10.1,locatie:"Schap A2",status:"In magazijn"},
+      {stapel_id:"ST-0003",verwerking_id:"V1",kleur_id:"K4",maat:"M",dikte_mm:1.3,aantal_stukken:11,gewicht_kg:6.8,locatie:"Schap B1",status:"In magazijn"},
+      {stapel_id:"ST-0004",verwerking_id:"V1",kleur_id:"K5",maat:"S",dikte_mm:1.1,aantal_stukken:12,gewicht_kg:4.0,locatie:"Schap B2",status:"In magazijn"}],
+    klanten:[{klant_id:"KL1",bedrijfsnaam:"Atelier voorbeeld (demoklant)",type:"Tassenmaker",contact_email:"demo@example.org"}],
+    bestellingen:[], regels:[], aanvragen:[],
+    meldingen:[{melding_id:"M1",bigbag_id:"BB-0001",type:"Uitval boven norm",omschrijving:"Uitval 16,0% bij BB-0001: afgesloten, geen actie nodig.",status:"Gesloten",datum:t(2)}],
+    settings:{uitvalNorm:25,tolerantie:3},
+    seq:{bb:5,v:2,st:5,u:5,m:2,r:2,b:1,rg:1,a:1,mo:2}
+  };
+}
+let S=load();
+function load(){try{const j=localStorage.getItem(KEY);if(j){const o=JSON.parse(j);if(o&&o.seq)return o}}catch(e){}return seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const pad=(n,w)=>String(n).padStart(w,"0");
+const nid=(k,p,w)=>p+pad(S.seq[k]++,w||4);
+const kg=n=>(Math.round(n*10)/10).toFixed(1).replace(".",",")+" kg";
+const pct=n=>(Math.round(n*10)/10).toFixed(1).replace(".",",")+"%";
+const kleurNaam=id=>(S.kleuren.find(k=>k.kleur_id===id)||{}).naam||"";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const hall=id=>(S.halls.find(h=>h.hal_id===id)||{}).naam||"";
+const num=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)?n:0};
+
+/* ============ UI-staat ============ */
+const ROLES={
+  hal:{naam:"Ontmantelingshal",tabs:[["start","Start"],["bigbags","Big bags"],["meldingen","Meldingen"]]},
+  circ:{naam:"Circuleather",tabs:[["start","Start"],["ophalen","Ophalen"],["levering","Inboeken"],["bestellingen","Bestellingen"],["meldingen","Meldingen"],["dashboard","Cijfers"],["model","Datamodel"]]},
+  tomin:{naam:"Tomingroep",tabs:[["start","Start"],["ontvangst","Ontvangst"],["verwerking","Verwerking"],["meldingen","Meldingen"]]},
+  magazijn:{naam:"Magazijn",tabs:[["start","Start"],["magazijn","Opdrachten"]]},
+  klant:{naam:"Klant",tabs:[["start","Start"],["voorraad","Voorraad"],["mijn","Mijn bestellingen"]]}
+};
+const ui={role:"hal",view:"start",toast:"",err:null,label:null,ok:null,sel:{},ontv:{code:"",bruto:""},hal:"H1",beslis:false,
+  rit:{datum:plus(1)},lev:{locatie:"Schap A1",steekproef:true},dikte:{},filter:{kleur:"",maat:"",dikte:""},cart:[],aanvraag:{omschrijving:"",kleur:"",maat:"",dikte:""},
+  vw:null,draft:null};
+
+/* ============ Acties (bedrijfsregels) ============ */
+const A={
+  role(r){ui.role=r;ui.view=ROLES[r].tabs[0][0];ui.err=null;ui.ok=null;ui.label=null},
+  view(v){ui.view=v;ui.err=null;ui.ok=null},
+  registreer(){
+    if(!ui.beslis)return ui.err={msg:"Beoordeel het leer eerst met de beslisgids (geen vuil of nep leer in de big bag)."};
+    const id="BB-"+pad(S.seq.bb++,4);
+    S.bigbags.push({bigbag_id:id,hal_id:ui.hal,rit_id:null,datum_gevuld:today(),status:"Gevuld"});
+    ui.label=id;ui.beslis=false;ui.err=null;toast("Big bag "+id+" geregistreerd");
+  },
+  melden(id){const b=S.bigbags.find(x=>x.bigbag_id===id);if(b){b.status="Ophaalverzoek";toast("Ophaalverzoek gemeld voor "+id)}},
+  planRit(){
+    const ids=Object.keys(ui.sel).filter(k=>ui.sel[k]);
+    if(!ids.length)return ui.err={msg:"Selecteer minimaal één big bag om op te halen."};
+    const per={};ids.forEach(id=>{const b=S.bigbags.find(x=>x.bigbag_id===id);(per[b.hal_id]=per[b.hal_id]||[]).push(b)});
+    Object.entries(per).forEach(([h,bags])=>{const rid=nid("r","R",1);S.ritten.push({rit_id:rid,hal_id:h,geplande_datum:ui.rit.datum,werkelijke_datum:null,status:"Gepland"});bags.forEach(b=>{b.rit_id=rid;b.status="Onderweg"})});
+    ui.sel={};ui.err=null;toast("Ophaalrit gepland (gecombineerd per hal)");
+  },
+  ontvang(){
+    const code=ui.ontv.code.trim().toUpperCase(),bruto=num(ui.ontv.bruto);
+    const b=S.bigbags.find(x=>x.bigbag_id===code);
+    if(!b)return ui.err={msg:"Code "+(code||"(leeg)")+" is niet bekend in het systeem.",label:true};
+    if(b.status!=="Onderweg")return ui.err={msg:code+" heeft status "+b.status+" en is niet onderweg naar Tomingroep."};
+    if(bruto<=0)return ui.err={msg:"Vul het brutogewicht in kilo's in."};
+    b.status="Ontvangen";
+    S.verwerkingen.push({verwerking_id:nid("v","V",1),bigbag_id:code,start_datum:today(),einde_datum:null,bruto_kg:bruto,netto_kg:0,uitval_kg:0,snijafval_kg:0,status:"Ontvangen"});
+    const r=S.ritten.find(x=>x.rit_id===b.rit_id);if(r){r.status="Afgerond";r.werkelijke_datum=today()}
+    ui.ontv={code:"",bruto:""};ui.err=null;toast(code+" ontvangen en gewogen: "+kg(bruto));
+  },
+  labelMelding(){
+    S.meldingen.push({melding_id:nid("m","M",1),bigbag_id:null,type:"Label onbekend",omschrijving:"Big bag met onleesbare of onbekende code ontvangen bij Tomingroep (code: "+(ui.ontv.code||"leeg")+").",status:"Open",datum:today()});
+    ui.err=null;toast("Afwijking gemeld aan hal en Circuleather");
+  },
+  start(vid){
+    const bezig=S.verwerkingen.find(v=>v.status==="In verwerking");
+    if(bezig)return ui.err={msg:"Rond eerst "+bezig.bigbag_id+" af: er ligt maar één big bag tegelijk in verwerking."};
+    const v=S.verwerkingen.find(x=>x.verwerking_id===vid);v.status="In verwerking";
+    S.bigbags.find(b=>b.bigbag_id===v.bigbag_id).status="In verwerking";
+    ui.vw=vid;ui.draft={vies:"",nep:"",beschadigd:"",verdacht:"",snijafval:"",rows:[{kleur:"K1",maat:"M",aantal:"",kg:""}],toel:""};ui.err=null;
+  },
+  open(vid){ui.vw=vid;ui.err=null;if(!ui.draft)ui.draft={vies:"",nep:"",beschadigd:"",verdacht:"",snijafval:"",rows:[{kleur:"K1",maat:"M",aantal:"",kg:""}],toel:""}},
+  addRow(){ui.draft.rows.push({kleur:"K1",maat:"M",aantal:"",kg:""})},
+  delRow(i){ui.draft.rows.splice(+i,1)},
+  afsluiten(){
+    const v=S.verwerkingen.find(x=>x.verwerking_id===ui.vw),d=ui.draft,c=calc(v,d);
+    if(!d.rows.some(r=>num(r.kg)>0))return ui.err={msg:"Registreer minimaal één stapel met een gewicht."};
+    if(Math.abs(c.verschil)>c.tol&&!d.toel.trim())return ui.err={msg:"De gewichten sluiten niet aan (verschil "+kg(c.verschil)+", toegestaan "+kg(c.tol)+"). Voeg een toelichting toe of corrigeer de invoer.",toel:true};
+    const cats=[["vies","B2"],["nep","B3"],["beschadigd","B2"],["verdacht","B4"],["snijafval","B1"]];
+    cats.forEach(([k,b])=>{const w=num(d[k]);if(w>0)S.uitval.push({uitval_id:nid("u","U",1),verwerking_id:v.verwerking_id,bestemming_id:b,categorie:k,gewicht_kg:w})});
+    d.rows.filter(r=>num(r.kg)>0).forEach(r=>S.stapels.push({stapel_id:nid("st","ST-"),verwerking_id:v.verwerking_id,kleur_id:r.kleur,maat:r.maat,dikte_mm:null,aantal_stukken:Math.round(num(r.aantal)),gewicht_kg:num(r.kg),locatie:null,status:"Bij Tomingroep"}));
+    Object.assign(v,{netto_kg:c.netto,uitval_kg:c.uitval,snijafval_kg:c.snij,einde_datum:today(),status:"Afgerond"});
+    S.bigbags.find(b=>b.bigbag_id===v.bigbag_id).status="Verwerkt";
+    if(c.uitvalPct>S.settings.uitvalNorm)S.meldingen.push({melding_id:nid("m","M",1),bigbag_id:v.bigbag_id,type:"Uitval boven norm",omschrijving:"Uitval "+pct(c.uitvalPct)+" bij "+v.bigbag_id+" (norm "+S.settings.uitvalNorm+"%). Oorzaak bespreken met de ontmantelingshal.",status:"Open",datum:today()});
+    if(Math.abs(c.verschil)>c.tol)S.meldingen.push({melding_id:nid("m","M",1),bigbag_id:v.bigbag_id,type:"Gewichtsverschil",omschrijving:"Verschil "+kg(c.verschil)+" bij "+v.bigbag_id+". Toelichting: "+d.toel.trim(),status:"Open",datum:today()});
+    if(num(d.verdacht)>0)S.meldingen.push({melding_id:nid("m","M",1),bigbag_id:v.bigbag_id,type:"Verdacht leer",omschrijving:kg(num(d.verdacht))+" verdacht leer (coating of geur) apart gehouden bij "+v.bigbag_id+". Wacht op een test (RG11).",status:"Open",datum:today()});
+    const volgende=S.bigbags.filter(b=>b.status==="Onderweg").sort((a,b)=>a.datum_gevuld<b.datum_gevuld?-1:1)[0];
+    const mo=nid("mo","MO-",3);
+    S.opdrachten.push({opdracht_id:mo,verwerking_id:v.verwerking_id,bigbag_id:v.bigbag_id,taak:volgende?"Afval en stapels weg, volgende big bag brengen":"Afval en stapels weg (geen big bag wacht)",volgende_bigbag:volgende?volgende.bigbag_id:null,aangemaakt:today(),uitgevoerd:null,status:"Open"});
+    ui.vw=null;ui.draft=null;ui.err=null;toast("Verwerking afgerond: "+c.n+" stapel(s) met QR-label. Magazijnopdracht "+mo+" staat klaar.");
+  },
+  uitvoeren(id){const o=S.opdrachten.find(x=>x.opdracht_id===id);if(o){o.status="Uitgevoerd";o.uitgevoerd=today();toast(id+" uitgevoerd")}},
+  levering(){
+    const ids=Object.keys(ui.sel).filter(k=>ui.sel[k]);
+    if(!ids.length)return ui.err={msg:"Selecteer minimaal één stapel."};
+    if(ui.lev.steekproef){const zonder=ids.filter(id=>!(num(ui.dikte[id])>0));if(zonder.length)return ui.err={msg:"Meet eerst de dikte (mm) van "+zonder.join(", ")+". Dit gebeurt één keer, bij het inboeken."}}
+    ids.forEach(id=>{const s=S.stapels.find(x=>x.stapel_id===id);
+      if(ui.lev.steekproef){s.status="In magazijn";s.locatie=ui.lev.locatie;s.dikte_mm=num(ui.dikte[id])}
+      else{s.status="Afgekeurd";const v=S.verwerkingen.find(x=>x.verwerking_id===s.verwerking_id);
+        S.meldingen.push({melding_id:nid("m","M",1),bigbag_id:v.bigbag_id,type:"Kwaliteit",omschrijving:"Stapel "+id+" afgekeurd in steekproef bij Circuleather. Terugkoppelen aan Tomingroep en de hal.",status:"Open",datum:today()})}});
+    ui.sel={};ui.dikte={};ui.err=null;toast(ui.lev.steekproef?"Stapels staan in de voorraad en zijn online zichtbaar":"Stapels afgekeurd en gemeld");
+  },
+  cart(id){const i=ui.cart.indexOf(id);i>=0?ui.cart.splice(i,1):ui.cart.push(id)},
+  bestel(){
+    if(!ui.cart.length)return ui.err={msg:"Kies eerst één of meer stapels."};
+    const ok=ui.cart.filter(id=>S.stapels.find(s=>s.stapel_id===id&&s.status==="In magazijn"));
+    if(ok.length!==ui.cart.length){ui.cart=ok;return ui.err={msg:"Een stapel is inmiddels niet meer beschikbaar en is uit je selectie gehaald."}}
+    const bid=nid("b","BS-",3);
+    S.bestellingen.push({bestelling_id:bid,klant_id:"KL1",besteldatum:today(),status:"Besteld",verwachte_levering:werkdagen(3)});
+    ok.forEach(id=>{const s=S.stapels.find(x=>x.stapel_id===id);s.status="Gereserveerd";S.regels.push({regel_id:nid("rg","RG-",3),bestelling_id:bid,stapel_id:id,gewicht_kg:s.gewicht_kg})});
+    ui.cart=[];ui.err=null;toast("Bestelling "+bid+" geplaatst, voorraad gereserveerd");ui.view="mijn";
+  },
+  verzend(bid){const b=S.bestellingen.find(x=>x.bestelling_id===bid);b.status="Verzonden";S.regels.filter(r=>r.bestelling_id===bid).forEach(r=>S.stapels.find(s=>s.stapel_id===r.stapel_id).status="Verkocht");toast(bid+" verzonden")},
+  aanvraag(){
+    const a=ui.aanvraag;if(!a.omschrijving.trim())return ui.err={msg:"Beschrijf wat je zoekt, bijvoorbeeld een grote of kleine partij."};
+    S.aanvragen.push({aanvraag_id:nid("a","SA-",3),klant_id:"KL1",omschrijving:a.omschrijving.trim(),kleur_id:a.kleur||null,maat:a.maat||null,dikte:a.dikte||null,status:"Ingediend"});
+    ui.aanvraag={omschrijving:"",kleur:"",maat:"",dikte:""};ui.err=null;toast("Speciale aanvraag ingediend");
+  },
+  offerte(id){S.aanvragen.find(a=>a.aanvraag_id===id).status="Offerte verstuurd";toast("Offerte verstuurd")},
+  sluit(id){S.meldingen.find(m=>m.melding_id===id).status="Gesloten"},
+  reset(){S=seed();Object.assign(ui,{sel:{},cart:[],vw:null,draft:null,err:null,label:null});toast("Voorbeelddata hersteld")}
+};
+function werkdagen(n){let d=new Date();while(n>0){d=new Date(d.getTime()+day);if(d.getDay()%6)n--}return iso(d)}
+function calc(v,d){
+  const vies=num(d.vies),nep=num(d.nep),bes=num(d.beschadigd),ver=num(d.verdacht),snij=num(d.snijafval);
+  const uitval=vies+nep+bes+ver,netto=d.rows.reduce((s,r)=>s+num(r.kg),0);
+  const verschil=v.bruto_kg-(netto+uitval+snij);
+  return {uitval,snij,netto,verschil,tol:v.bruto_kg*S.settings.tolerantie/100,uitvalPct:v.bruto_kg?uitval/v.bruto_kg*100:0,n:d.rows.filter(r=>num(r.kg)>0).length};
+}
+
+/* ============ Weergave ============ */
+const chip=s=>{const m={"Verwerkt":"good","Afgerond":"good","In magazijn":"good","Verzonden":"good","Gesloten":"good","Verkocht":"good","Open":"warn","Gevuld":"info","Ophaalverzoek":"warn","Onderweg":"info","Ontvangen":"info","In verwerking":"warn","Bij Tomingroep":"info","Gereserveerd":"warn","Besteld":"warn","Ingediend":"warn","Gepland":"info","Afgekeurd":"bad","Offerte verstuurd":"good","Uitgevoerd":"good"};return `<span class="chip ${m[s]||""}">${esc(s)}</span>`};
+const sw=id=>`<span class="sw" style="background:var(--c-${kleurNaam(id)||"afwijkend"})"></span>${esc(kleurNaam(id))}`;
+function qr(code){
+  let h=0;for(const c of code)h=(h*31+c.charCodeAt(0))>>>0;const n=21;let o=`<svg viewBox="0 0 ${n} ${n}" role="img" aria-label="Voorbeeld-QR voor ${esc(code)}" shape-rendering="crispEdges">`;
+  const fp=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#000"/>`;
+  o+=fp(0,0)+fp(14,0)+fp(0,14);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12))continue;h=(h*1103515245+12345)>>>0;if((h>>>16)&1)o+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#000"/>`}
+  return o+"</svg>";
+}
+function statsAll(){
+  const done=S.verwerkingen.filter(v=>v.status==="Afgerond");
+  const bruto=done.reduce((s,v)=>s+v.bruto_kg,0),netto=done.reduce((s,v)=>s+v.netto_kg,0);
+  const cat=c=>S.uitval.filter(u=>u.categorie===c&&done.some(v=>v.verwerking_id===u.verwerking_id)).reduce((s,u)=>s+u.gewicht_kg,0);
+  const vies=cat("vies"),nep=cat("nep"),bes=cat("beschadigd"),ver=cat("verdacht"),snij=cat("snijafval");
+  const dagen=done.length?done.reduce((s,v)=>s+Math.max(1,Math.round((new Date(v.einde_datum)-new Date(v.start_datum))/day)),0)/done.length:0;
+  const mag=S.stapels.filter(s=>s.status==="In magazijn");
+  return {done,bruto,netto,vies,nep,bes,ver,snij,dagen,mag,magKg:mag.reduce((s,x)=>s+x.gewicht_kg,0)};
+}
+function errBox(){return ui.err?`<div class="notice bad" role="alert">${esc(ui.err.msg)}</div>`:""}
+
+
+function taken(){
+  const n=(arr)=>arr.length,r=ui.role,T=[];
+  if(r==="hal"){const g=S.bigbags.filter(b=>b.status==="Gevuld");if(g.length)T.push([g.length+(g.length===1?" volle big bag is":" volle big bags zijn")+" nog niet aangemeld voor ophalen","bigbags","Aanmelden"])}
+  if(r==="circ"){
+    const o=S.bigbags.filter(b=>b.status==="Ophaalverzoek"),l=S.stapels.filter(x=>x.status==="Bij Tomingroep"),m=S.meldingen.filter(x=>x.status==="Open"),a=S.aanvragen.filter(x=>x.status==="Ingediend"),b=S.bestellingen.filter(x=>x.status==="Besteld");
+    if(o.length)T.push([n(o)+" ophaalverzoek"+(n(o)===1?"":"en")+" wacht"+(n(o)===1?"":"en")+" op een ophaalrit","ophalen","Rit plannen"]);
+    if(l.length)T.push([n(l)+" stapel"+(n(l)===1?"":"s")+" van Tomingroep "+(n(l)===1?"moet":"moeten")+" worden ingeboekt","levering","Inboeken"]);
+    if(b.length)T.push([n(b)+" bestelling"+(n(b)===1?"":"en")+" om te verzenden","bestellingen","Bekijken"]);
+    if(a.length)T.push([n(a)+" speciale aanvra"+(n(a)===1?"ag":"gen")+" zonder offerte","bestellingen","Bekijken"]);
+    if(m.length)T.push([n(m)+" open melding"+(n(m)===1?"":"en"),"meldingen","Bekijken"]);
+  }
+  if(r==="tomin"){
+    const o=S.bigbags.filter(b=>b.status==="Onderweg"),v=S.verwerkingen.filter(x=>x.status==="Ontvangen"),w=S.verwerkingen.filter(x=>x.status==="In verwerking");
+    if(w.length)T.push([w[0].bigbag_id+" is in verwerking. Rond hem af.","verwerking","Verder gaan"]);
+    if(v.length)T.push([n(v)+" big bag"+(n(v)===1?"":"s")+" gewogen en klaar om te verwerken","verwerking","Starten"]);
+    if(o.length)T.push([n(o)+" big bag"+(n(o)===1?"":"s")+" onderweg naar jullie","ontvangst","Ontvangen"]);
+  }
+  if(r==="magazijn"){const o=S.opdrachten.filter(x=>x.status!=="Uitgevoerd");if(o.length)T.push([n(o)+" opdracht"+(n(o)===1?"":"en")+" om uit te voeren","magazijn","Uitvoeren"])}
+  if(r==="klant"){T.push(["Zoek leer en bestel hele stapels","voorraad","Voorraad bekijken"]);const b=S.bestellingen.length;if(b)T.push([b+" bestelling"+(b===1?"":"en")+" geplaatst","mijn","Bekijken"])}
+  return T;
+}
+function vStart(){
+  const t=taken(),nm=ROLES[ui.role].naam;
+  const extra=ui.role==="hal"?`<p class="muted small" style="margin-top:-12px;margin-bottom:22px">Is er een big bag vol geworden? Registreer hem dan meteen onder Big bags.</p>`:"";
+  return `<h2>Wat moet je nu doen?</h2><p class="sub muted">Je werkt als ${esc(nm)}.</p>
+  ${t.length?`<ul class="todo">${t.map(([x,v,b])=>`<li><span>${esc(x)}</span><button class="btn" data-view="${v}">${b}</button></li>`).join("")}</ul>`:`<p style="margin:14px 0 26px">Er is niets te doen. Alles is bijgewerkt.</p>`}${extra}`;
+}
+function vDashboard(){
+  const s=statsAll(),B=s.bruto||1,open=S.meldingen.filter(m=>m.status==="Open").length;
+  const seg=[["Verkoopbaar leer",s.netto,"var(--accent)"],["Snijafval",s.snij,"var(--muted)"],["Beschadigd",s.bes,"var(--warn)"],["Vies",s.vies,"#8a6d3b"],["Nepleer",s.nep,"var(--bad)"],["Verdacht",s.ver,"#6b4fa0"]];
+  const per={};S.kleuren.forEach(k=>per[k.kleur_id]=0);s.mag.forEach(x=>per[x.kleur_id]+=x.gewicht_kg);const mx=Math.max(1,...Object.values(per));
+  const st={};S.bigbags.forEach(b=>st[b.status]=(st[b.status]||0)+1);
+  return `<h2>Cijfers</h2><p class="sub muted" style="margin-bottom:10px">Zo staat het er nu voor. Gebaseerd op de afgeronde big bags (${s.done.length}).</p>
+  <table class="facts"><tbody>
+    <tr><td>Netto opbrengst<small>verkoopbaar leer ten opzichte van het brutogewicht</small></td><td>${s.bruto?pct(s.netto/s.bruto*100):"–"}</td></tr>
+    <tr><td>Uitval (vies, nep, beschadigd, verdacht)<small>norm ${S.settings.uitvalNorm}% (aanname)</small></td><td>${s.bruto?pct((s.vies+s.nep+s.bes+s.ver)/s.bruto*100):"–"}</td></tr>
+    <tr><td>Doorlooptijd per big bag<small>van ontvangst tot stapels klaar</small></td><td>${s.done.length?s.dagen.toFixed(1).replace(".",",")+" dagen":"–"}</td></tr>
+    <tr><td>Voorraad in magazijn<small>${s.mag.length} stapels, ${open} open melding${open===1?"":"en"}</small></td><td>${kg(s.magKg)}</td></tr>
+  </tbody></table>
+  <div class="grid g2">
+   <div class="panel"><h3>Waar blijft het leer?</h3><p class="sub">Aandeel van het brutogewicht, alle afgeronde big bags (${s.done.length}).</p>
+     <div class="stack" role="img" aria-label="Verdeling brutogewicht">${seg.map(([n,v,c])=>`<i style="width:${v/B*100}%;background:${c}" title="${n}"></i>`).join("")}</div>
+     <div class="legend">${seg.map(([n,v,c])=>`<span><span class="sw" style="background:${c}"></span>${n} ${s.bruto?pct(v/B*100):"–"}</span>`).join("")}</div>
+     <h3 style="margin-top:20px">Big bags per status</h3><p style="margin-top:8px">${Object.entries(st).map(([k,v])=>`${chip(k)} <b>${v}</b>&nbsp;&nbsp;`).join("")}</p></div>
+   <div class="panel"><h3>Voorraad per kleur</h3><p class="sub">Kilo's in het magazijn, zichtbaar voor klanten.</p>
+     ${S.kleuren.map(k=>`<div class="bar"><span>${sw(k.kleur_id)}</span><span class="t"><i style="width:${per[k.kleur_id]/mx*100}%"></i></span><span class="num" style="text-align:right">${kg(per[k.kleur_id])}</span></div>`).join("")}
+     <h3 style="margin-top:20px">Instellingen</h3><div class="row" style="margin-top:8px"><div><label for="norm">Norm uitval (%)</label><input id="norm" type="number" min="1" max="90" value="${S.settings.uitvalNorm}" data-bind="settings.uitvalNorm"></div><div><label for="tol">Tolerantie gewicht (%)</label><input id="tol" type="number" min="0" max="20" value="${S.settings.tolerantie}" data-bind="settings.tolerantie"></div></div>
+     <p class="small muted">Beide waarden zijn aannames en worden na de nulmeting met de opdrachtgever vastgesteld.</p></div></div>`;
+}
+function vBigbags(){
+  const cur=S.bigbags.slice().reverse();
+  return `<div class="grid g2"><div class="panel"><h3>Nieuwe big bag registreren</h3><p class="sub">Registreer direct bij het vullen. Het systeem maakt de code en het QR-label.</p>${errBox()}
+   <div class="row"><div><label for="hal">Ontmantelingshal</label><select id="hal" data-bind="hal">${S.halls.map(h=>`<option value="${h.hal_id}" ${ui.hal===h.hal_id?"selected":""}>${esc(h.naam)}</option>`).join("")}</select></div></div>
+   <label class="check"><input type="checkbox" id="bg" ${ui.beslis?"checked":""} data-bind="beslis"><span>Leer beoordeeld met de beslisgids: geen vuil of nepleer in de big bag</span></label>
+   <button class="btn" data-act="registreer">Big bag registreren</button>
+   ${ui.label?`<div class="label-card">${qr(ui.label)}<div><b class="code" style="font-size:1.3rem">${ui.label}</b><p class="small muted">Voorbeeldlabel. Plak het op de big bag. Tomingroep scant dit bij ontvangst.</p></div></div>`:""}</div>
+   <div class="panel"><h3>Mijn big bags</h3><p class="sub">Meld een volle big bag aan voor ophalen.</p><div class="tw"><table><thead><tr><th>Code</th><th>Hal</th><th>Gevuld</th><th>Status</th><th></th></tr></thead><tbody>
+   ${cur.map(b=>`<tr><td class="code">${b.bigbag_id}</td><td>${esc(hall(b.hal_id).replace("Ontmantelingshal ",""))}</td><td>${b.datum_gevuld}</td><td>${chip(b.status)}</td><td>${b.status==="Gevuld"?`<button class="btn sm" data-act="melden" data-id="${b.bigbag_id}">Ophalen aanvragen</button>`:""}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+}
+function vOphalen(){
+  const w=S.bigbags.filter(b=>b.status==="Ophaalverzoek");
+  return `<div class="grid g2"><div class="panel"><h3>Ophaalverzoeken</h3><p class="sub">Combineer big bags tot één rit per hal. Zo blijft de wachttijd laag.</p>${errBox()}
+   ${w.length?`<div class="tw"><table><thead><tr><th></th><th>Code</th><th>Hal</th><th>Gevuld</th></tr></thead><tbody>${w.map(b=>`<tr><td><input type="checkbox" aria-label="Selecteer ${b.bigbag_id}" ${ui.sel[b.bigbag_id]?"checked":""} data-sel="${b.bigbag_id}"></td><td class="code">${b.bigbag_id}</td><td>${esc(hall(b.hal_id))}</td><td>${b.datum_gevuld}</td></tr>`).join("")}</tbody></table></div>
+   <div class="row" style="margin-top:14px"><div><label for="rd">Ophaaldatum</label><input id="rd" type="date" value="${ui.rit.datum}" data-bind="rit.datum"></div><div><button class="btn" data-act="planRit">Ophaalrit plannen</button></div></div>`:`<p class="muted">Geen openstaande ophaalverzoeken.</p>`}</div>
+   <div class="panel"><h3>Ritten</h3><div class="tw"><table><thead><tr><th>Rit</th><th>Hal</th><th>Gepland</th><th>Status</th></tr></thead><tbody>${S.ritten.slice().reverse().map(r=>`<tr><td class="code">${r.rit_id}</td><td>${esc(hall(r.hal_id).replace("Ontmantelingshal ",""))}</td><td>${r.geplande_datum}</td><td>${chip(r.status)}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+}
+function vOntvangst(){
+  const onderweg=S.bigbags.filter(b=>b.status==="Onderweg");
+  return `<div class="grid g2"><div class="panel"><h3>Big bag ontvangen</h3><p class="sub">Scan het QR-label en weeg de big bag. Dit is het brutogewicht.</p>${errBox()}
+   <div class="row"><div><label for="oc">Code (scan of typ)</label><input id="oc" class="code" placeholder="BB-0002" value="${esc(ui.ontv.code)}" data-bind="ontv.code" autocomplete="off"></div>
+   <div><label for="ob">Brutogewicht (kg)</label><input id="ob" inputmode="decimal" placeholder="38,5" value="${esc(ui.ontv.bruto)}" data-bind="ontv.bruto"></div></div>
+   <button class="btn" data-act="ontvang">Ontvangen</button>
+   ${ui.err&&ui.err.label?` <button class="btn sec" data-act="labelMelding">Label klopt niet: afwijking melden</button>`:""}
+   ${onderweg.length?`<p class="small muted" style="margin-top:14px">Onderweg naar Tomingroep: ${onderweg.map(b=>`<button class="btn link code" data-act="vul" data-id="${b.bigbag_id}">${b.bigbag_id}</button>`).join(" ")}</p>`:""}</div>
+   <div class="panel"><h3>Ontvangen en in verwerking</h3><div class="tw"><table><thead><tr><th>Code</th><th class="num">Bruto</th><th>Status</th></tr></thead><tbody>${S.verwerkingen.slice().reverse().map(v=>`<tr><td class="code">${v.bigbag_id}</td><td class="num">${kg(v.bruto_kg)}</td><td>${chip(v.status)}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+}
+function summary(v,d){
+  const c=calc(v,d),bad=Math.abs(c.verschil)>c.tol;
+  return `<table class="facts"><tbody>
+    <tr><td>Bruto gewicht</td><td>${kg(v.bruto_kg)}</td></tr>
+    <tr><td>Verkoopbaar (stapels)</td><td>${kg(c.netto)}</td></tr>
+    <tr><td>Uitval en snijafval<small>uitval ${pct(c.uitvalPct)}</small></td><td>${kg(c.uitval+c.snij)}</td></tr>
+    <tr><td>Verschil<small>toegestaan ±${kg(c.tol)}</small></td><td style="color:${bad?"var(--bad)":"var(--good)"}">${kg(c.verschil)}</td></tr>
+  </tbody></table>`;
+}
+function vVerwerking(){
+  const lijst=S.verwerkingen.filter(v=>v.status!=="Afgerond");
+  const v=S.verwerkingen.find(x=>x.verwerking_id===ui.vw&&x.status==="In verwerking"),d=ui.draft;
+  let form="";
+  if(v&&d){
+    form=`<div class="panel" style="margin-top:16px"><h3>Verwerking ${esc(v.bigbag_id)}</h3><p class="sub">Registreer wat er uit de big bag komt. Zet vies leer, nepleer, verdacht leer en snijafval in aparte zakken en weeg ze. De dikte meet Circuleather later, bij het inboeken.</p>${errBox()}
+     <div id="sum">${summary(v,d)}</div>
+     <h3 style="margin:12px 0 8px">Uitval en snijafval (kg)</h3>
+     <div class="row">${[["vies","Vies leer"],["nep","Nepleer"],["beschadigd","Beschadigd"],["verdacht","Verdacht (coating of geur)"],["snijafval","Snijafval"]].map(([k,n])=>`<div><label for="u-${k}">${n}</label><input id="u-${k}" inputmode="decimal" value="${esc(d[k])}" data-bind="draft.${k}" placeholder="0,0"></div>`).join("")}</div>
+     <h3 style="margin:12px 0 8px">Stapels</h3><p class="small muted" style="margin-bottom:8px">Maat S = kleinste bruikbare stuk. Kleiner is snijafval. Valt een stuk tussen twee maten, dan geldt de grotere maat. Snijd zo groot mogelijk.</p>
+     ${d.rows.map((r,i)=>`<div class="row"><div><label for="k${i}">Kleur</label><select id="k${i}" data-bind="draft.rows.${i}.kleur">${S.kleuren.map(k=>`<option value="${k.kleur_id}" ${r.kleur===k.kleur_id?"selected":""}>${k.naam}</option>`).join("")}</select></div>
+       <div><label for="m${i}">Maat</label><select id="m${i}" data-bind="draft.rows.${i}.maat">${MATEN.map(m=>`<option ${r.maat===m?"selected":""}>${m}</option>`).join("")}</select></div>
+       <div><label for="a${i}">Stukken</label><input id="a${i}" inputmode="numeric" value="${esc(r.aantal)}" data-bind="draft.rows.${i}.aantal"></div>
+       <div><label for="g${i}">Gewicht (kg)</label><input id="g${i}" inputmode="decimal" value="${esc(r.kg)}" data-bind="draft.rows.${i}.kg"></div>
+       <div style="flex:0 0 auto"><button class="btn sec sm" data-act="delRow" data-id="${i}" ${d.rows.length<2?"disabled":""} aria-label="Verwijder stapel ${i+1}">Verwijder</button></div></div>`).join("")}
+     <button class="btn sec sm" data-act="addRow">Stapel toevoegen</button>
+     ${ui.err&&ui.err.toel?`<div style="margin-top:12px"><label for="toel">Toelichting op het gewichtsverschil</label><textarea id="toel" rows="2" data-bind="draft.toel">${esc(d.toel)}</textarea></div>`:""}
+     <div style="margin-top:16px"><button class="btn" data-act="afsluiten">Verwerking afsluiten en QR-labels maken</button></div></div>`;
+  }
+  return `<div class="panel"><h3>Te verwerken</h3><p class="sub">Eén big bag tegelijk, zodat de telling zuiver blijft.</p>${v?"":errBox()}
+   ${lijst.length?`<div class="tw"><table><thead><tr><th>Code</th><th class="num">Bruto</th><th>Status</th><th></th></tr></thead><tbody>${lijst.map(x=>`<tr><td class="code">${x.bigbag_id}</td><td class="num">${kg(x.bruto_kg)}</td><td>${chip(x.status)}</td><td>${x.status==="Ontvangen"?`<button class="btn sm" data-act="start" data-id="${x.verwerking_id}">Start verwerking</button>`:`<button class="btn sm sec" data-act="open" data-id="${x.verwerking_id}">Openen</button>`}</td></tr>`).join("")}</tbody></table></div>`:`<p class="muted">Niets te verwerken. Ontvang eerst een big bag.</p>`}</div>${form}`;
+}
+function vLevering(){
+  const bij=S.stapels.filter(s=>s.status==="Bij Tomingroep");
+  return `<div class="panel"><h3>Levering van Tomingroep</h3><p class="sub">Controleer een steekproef. Kleur en maat komen van Tomingroep en hoef je niet opnieuw te bepalen. Meet alleen de dikte, één keer per stapel. Alles wat akkoord is, staat direct in de voorraad en op de website.</p>${errBox()}
+   ${bij.length?`<div class="tw"><table><thead><tr><th></th><th>Stapel</th><th>Kleur</th><th>Maat</th><th class="num">Dikte (mm)</th><th class="num">Gewicht</th></tr></thead><tbody>${bij.map(s=>`<tr><td><input type="checkbox" aria-label="Selecteer ${s.stapel_id}" ${ui.sel[s.stapel_id]?"checked":""} data-sel="${s.stapel_id}"></td><td class="code">${s.stapel_id}</td><td>${sw(s.kleur_id)}</td><td>${s.maat}</td><td class="num"><input id="dk-${s.stapel_id}" aria-label="Dikte in mm voor ${s.stapel_id}" inputmode="decimal" style="max-width:90px" placeholder="1,2" value="${esc(ui.dikte[s.stapel_id]||"")}" data-bind="dikte.${s.stapel_id}"></td><td class="num">${kg(s.gewicht_kg)}</td></tr>`).join("")}</tbody></table></div>
+   <div class="row" style="margin-top:14px"><div><label for="loc">Magazijnlocatie</label><select id="loc" data-bind="lev.locatie">${["Schap A1","Schap A2","Schap B1","Schap B2","Schap C1"].map(l=>`<option ${ui.lev.locatie===l?"selected":""}>${l}</option>`).join("")}</select></div>
+   <div><label class="check" style="margin-top:26px"><input type="checkbox" ${ui.lev.steekproef?"checked":""} data-bind="lev.steekproef"><span>Steekproef akkoord</span></label></div><div><button class="btn" data-act="levering">Inboeken</button></div></div>`:`<p class="muted">Geen stapels onderweg. Rond eerst een verwerking af bij Tomingroep.</p>`}</div>
+   <div class="panel" style="margin-top:16px"><h3>Voorraad</h3>${stockTable(false)}</div>`;
+}
+function stockRows(){
+  const f=ui.filter;return S.stapels.filter(s=>["In magazijn","Gereserveerd"].includes(s.status)).filter(s=>(!f.kleur||s.kleur_id===f.kleur)&&(!f.maat||s.maat===f.maat)&&(!f.dikte||s.dikte_mm>=num(f.dikte)));
+}
+function filters(){const f=ui.filter;return `<div class="row"><div><label for="fk">Kleur</label><select id="fk" data-bind="filter.kleur"><option value="">Alle</option>${S.kleuren.map(k=>`<option value="${k.kleur_id}" ${f.kleur===k.kleur_id?"selected":""}>${k.naam}</option>`).join("")}</select></div>
+ <div><label for="fm">Maat</label><select id="fm" data-bind="filter.maat"><option value="">Alle</option>${MATEN.map(m=>`<option ${f.maat===m?"selected":""}>${m}</option>`).join("")}</select></div>
+ <div><label for="fd">Dikte vanaf (mm)</label><input id="fd" inputmode="decimal" value="${esc(f.dikte)}" data-bind="filter.dikte" placeholder="1,2"></div></div>`}
+function stockTable(klant){
+  const r=stockRows();
+  return filters()+`<div class="tw"><table><thead><tr><th>Stapel</th><th>Kleur</th><th>Maat</th><th class="num">Dikte</th><th class="num">Stukken</th><th class="num">Gewicht</th>${klant?"":"<th>Locatie</th>"}<th>Status</th>${klant?"<th></th>":""}</tr></thead><tbody>
+  ${r.map(s=>`<tr><td class="code">${s.stapel_id}</td><td>${sw(s.kleur_id)}</td><td>${s.maat}</td><td class="num">${String(s.dikte_mm).replace(".",",")} mm</td><td class="num">${s.aantal_stukken}</td><td class="num">${kg(s.gewicht_kg)}</td>${klant?"":`<td>${esc(s.locatie||"")}</td>`}<td>${chip(s.status==="In magazijn"?"In magazijn":"Gereserveerd")}</td>${klant?`<td>${s.status==="In magazijn"?`<button class="btn sm ${ui.cart.includes(s.stapel_id)?"":"sec"}" data-act="cart" data-id="${s.stapel_id}" aria-pressed="${ui.cart.includes(s.stapel_id)}">${ui.cart.includes(s.stapel_id)?"In bestelling":"Toevoegen"}</button>`:""}</td>`:""}</tr>`).join("")||`<tr><td colspan="9" class="muted">Geen stapels met dit filter.</td></tr>`}</tbody></table></div>`;
+}
+function vVoorraad(){
+  const tot=ui.cart.reduce((s,id)=>s+S.stapels.find(x=>x.stapel_id===id).gewicht_kg,0),a=ui.aanvraag;
+  return `<div class="panel"><h3>Beschikbaar leer</h3><p class="sub">Alleen gecontroleerd leer uit het magazijn staat hier. Bestel hele stapels per kleur, maat en dikte.</p>${errBox()}${stockTable(true)}
+   <div class="row" style="margin-top:14px;align-items:center"><div><b>${ui.cart.length} stapel(s) · ${kg(tot)}</b><div class="small muted">Verwachte levering: ${werkdagen(3)} (aanname: 3 werkdagen)</div></div><div style="flex:0 0 auto"><button class="btn" data-act="bestel">Bestelling plaatsen</button></div></div></div>
+   <div class="panel" style="margin-top:16px"><h3>Staat jouw leer er niet tussen?</h3><p class="sub">Dien een speciale aanvraag in, bijvoorbeeld voor een grote of kleine partij.</p>
+   <div class="row"><div style="flex:2 1 280px"><label for="ao">Wat zoek je?</label><textarea id="ao" rows="2" data-bind="aanvraag.omschrijving">${esc(a.omschrijving)}</textarea></div>
+   <div><label for="ak">Kleur</label><select id="ak" data-bind="aanvraag.kleur"><option value="">Geen voorkeur</option>${S.kleuren.map(k=>`<option value="${k.kleur_id}" ${a.kleur===k.kleur_id?"selected":""}>${k.naam}</option>`).join("")}</select></div>
+   <div><label for="am">Maat</label><select id="am" data-bind="aanvraag.maat"><option value="">Geen voorkeur</option>${MATEN.map(m=>`<option ${a.maat===m?"selected":""}>${m}</option>`).join("")}</select></div>
+   <div><label for="ad">Dikte vanaf (mm)</label><input id="ad" inputmode="decimal" placeholder="1,2" value="${esc(a.dikte)}" data-bind="aanvraag.dikte"></div></div>
+   <button class="btn sec" data-act="aanvraag">Aanvraag indienen</button></div>`;
+}
+function vBestellingen(klant){
+  const bs=S.bestellingen.slice().reverse(),as=S.aanvragen.slice().reverse();
+  return `<div class="grid g2"><div class="panel"><h3>Bestellingen</h3>${bs.length?`<div class="tw"><table><thead><tr><th>Nummer</th><th>Datum</th><th>Stapels</th><th>Levering</th><th>Status</th>${klant?"":"<th></th>"}</tr></thead><tbody>${bs.map(b=>`<tr><td class="code">${b.bestelling_id}</td><td>${b.besteldatum}</td><td>${S.regels.filter(r=>r.bestelling_id===b.bestelling_id).map(r=>r.stapel_id).join(", ")}</td><td>${b.verwachte_levering}</td><td>${chip(b.status)}</td>${klant?"":`<td>${b.status==="Besteld"?`<button class="btn sm" data-act="verzend" data-id="${b.bestelling_id}">Verzonden</button>`:""}</td>`}</tr>`).join("")}</tbody></table></div>`:`<p class="muted">Nog geen bestellingen. Bestel via het tabblad Voorraad als klant.</p>`}</div>
+  <div class="panel"><h3>Speciale aanvragen</h3>${as.length?`<div class="tw"><table><thead><tr><th>Nummer</th><th>Aanvraag</th><th>Status</th>${klant?"":"<th></th>"}</tr></thead><tbody>${as.map(a=>`<tr><td class="code">${a.aanvraag_id}</td><td>${esc(a.omschrijving)}</td><td>${chip(a.status)}</td>${klant?"":`<td>${a.status==="Ingediend"?`<button class="btn sm" data-act="offerte" data-id="${a.aanvraag_id}">Offerte sturen</button>`:""}</td>`}</tr>`).join("")}</tbody></table></div>`:`<p class="muted">Geen aanvragen.</p>`}</div></div>`;
+}
+function vMagazijn(){
+  const o=S.opdrachten.slice().reverse(),wacht=S.bigbags.filter(b=>b.status==="Onderweg").sort((a,b)=>a.datum_gevuld<b.datum_gevuld?-1:1);
+  return `<div class="grid g2"><div class="panel"><h3>Magazijnopdrachten</h3><p class="sub">Zodra Tomingroep een big bag afsluit, maakt het systeem zelf een opdracht: afval en stapels wegbrengen en de volgende big bag brengen. De oudste big bag gaat eerst.</p>
+   ${o.length?`<div class="tw"><table><thead><tr><th>Nummer</th><th>Klaar</th><th>Taak</th><th>Volgende</th><th>Gemaakt</th><th>Status</th><th></th></tr></thead><tbody>${o.map(x=>`<tr><td class="code">${x.opdracht_id}</td><td class="code">${x.bigbag_id}</td><td>${esc(x.taak)}</td><td class="code">${x.volgende_bigbag||"–"}</td><td>${x.aangemaakt}</td><td>${chip(x.status)}</td><td>${x.status==="Open"?`<button class="btn sm" data-act="uitvoeren" data-id="${x.opdracht_id}">Uitgevoerd</button>`:""}</td></tr>`).join("")}</tbody></table></div>`:`<p class="muted">Geen opdrachten.</p>`}</div>
+   <div class="panel"><h3>Wacht in het magazijn</h3><p class="sub">Big bags die zijn opgehaald en nog naar Tomingroep moeten, oudste eerst.</p>${wacht.length?`<div class="tw"><table><thead><tr><th>Code</th><th>Hal</th><th>Gevuld</th></tr></thead><tbody>${wacht.map(b=>`<tr><td class="code">${b.bigbag_id}</td><td>${esc(hall(b.hal_id).replace("Ontmantelingshal ",""))}</td><td>${b.datum_gevuld}</td></tr>`).join("")}</tbody></table></div>`:`<p class="muted">Geen big bags in het magazijn.</p>`}</div></div>`;
+}
+function vMeldingen(){
+  const m=S.meldingen.slice().reverse();
+  return `<div class="panel"><h3>Meldingen</h3><p class="sub">Afwijkingen die bij de bron moeten worden opgelost, zodat de volgende big bag beter is.</p><div class="tw"><table><thead><tr><th>Datum</th><th>Type</th><th>Big bag</th><th>Omschrijving</th><th>Status</th><th></th></tr></thead><tbody>${m.map(x=>`<tr><td>${x.datum}</td><td>${esc(x.type)}</td><td class="code">${x.bigbag_id||"–"}</td><td>${esc(x.omschrijving)}</td><td>${chip(x.status)}</td><td>${x.status==="Open"?`<button class="btn sm sec" data-act="sluit" data-id="${x.melding_id}">Afhandelen</button>`:""}</td></tr>`).join("")}</tbody></table></div></div>`;
+}
+function vModel(){
+  const rows=[["Ontmantelingshal","halls"],["Ophaalrit","ritten"],["BigBag","bigbags"],["Melding","meldingen"],["Verwerking","verwerkingen"],["Uitvalregel","uitval"],["Bestemming","bestemmingen"],["Leertoets","toetsen"],["Magazijnopdracht","opdrachten"],["Leerstapel","stapels"],["Kleur","kleuren"],["Klant","klanten"],["Bestelling","bestellingen"],["Bestelregel","regels"],["Speciale aanvraag","aanvragen"]];
+  return `<div class="panel"><h3>Datamodel in het prototype</h3><p class="sub">Elke entiteit uit het informatiemodel heeft een eigen tabel. Het aantal records laat zien dat de schermen echt in deze tabellen schrijven.</p><div class="tw"><table><thead><tr><th>Entiteit</th><th>Tabel</th><th class="num">Records</th><th>Laatste record</th></tr></thead><tbody>${rows.map(([n,k])=>`<tr><td>${n}</td><td class="code">${k}</td><td class="num">${S[k].length}</td><td><details style="margin:0"><summary class="small">Tonen</summary><pre>${esc(JSON.stringify(S[k][S[k].length-1]||null,null,1))}</pre></details></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+const VIEWS={start:vStart,magazijn:vMagazijn,dashboard:vDashboard,ophalen:vOphalen,levering:vLevering,bestellingen:()=>vBestellingen(false),meldingen:vMeldingen,model:vModel,bigbags:vBigbags,ontvangst:vOntvangst,verwerking:vVerwerking,voorraad:vVoorraad,mijn:()=>vBestellingen(true)};
+const DEMO=["Hal: registreer een big bag en meld deze voor ophalen.","Circuleather: plan een ophaalrit.","Tomingroep: scan en weeg de big bag bij ontvangst.","Tomingroep: start de verwerking, registreer uitval en stapels, sluit af.","Magazijn: voer de magazijnopdracht uit die het systeem na het afsluiten maakte.","Circuleather: meet de dikte per stapel en boek de levering in (Inboeken) na de steekproef.","Klant: bestel een stapel; Circuleather ziet het onder Bestellingen en op de Start-pagina."];
+function render(){
+  const R=ROLES[ui.role];
+  document.getElementById("app").innerHTML=`<header class="top"><div class="brand"><b>Leerregistratie</b><span>Prototype voor Circuleather en Tomingroep</span></div>
+   <div class="roles" role="group" aria-label="Kies een rol"><span class="who">Ik werk als:</span>${Object.entries(ROLES).map(([k,r])=>`<button aria-pressed="${ui.role===k}" data-role="${k}">${r.naam}</button>`).join("")}</div></header>
+   <div class="banner"><span>Voorbeeldgegevens. Wissel van rol om het hele proces te doorlopen.</span><button class="btn sec sm" data-act="reset">Opnieuw beginnen</button></div>
+   <nav class="tabs" role="tablist" aria-label="Schermen">${R.tabs.map(([k,n])=>`<button role="tab" aria-selected="${ui.view===k}" data-view="${k}">${n}</button>`).join("")}</nav>
+   <main>${VIEWS[ui.view]()}</main>
+   <details><summary>Demoroute voor de review (10 minuten)</summary><ol class="demo">${DEMO.map(x=>`<li>${x}</li>`).join("")}</ol></details>
+   ${ui.toast?`<div class="toast" role="status">${esc(ui.toast)}</div>`:""}`;
+}
+let tt;function toast(m){ui.toast=m;clearTimeout(tt);tt=setTimeout(()=>{ui.toast="";const t=document.querySelector(".toast");if(t)t.remove()},3200)}
+/* ============ Events ============ */
+const app=document.getElementById("app");
+function setPath(path,val){const p=path.split(".");let o=p[0]==="settings"?S:ui;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
+app.addEventListener("click",e=>{
+  const r=e.target.closest("[data-role]");if(r){A.role(r.dataset.role);return go()}
+  const v=e.target.closest("[data-view]");if(v){A.view(v.dataset.view);return go()}
+  const a=e.target.closest("[data-act]");if(!a)return;
+  const act=a.dataset.act;
+  if(act==="vul"){ui.ontv.code=a.dataset.id;ui.err=null;return go()}
+  A[act]&&A[act](a.dataset.id);go();
+});
+app.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.bind){
+    const val=t.type==="checkbox"?t.checked:t.value;setPath(t.dataset.bind,t.dataset.bind.startsWith("settings.")?num(val):val);
+    if(t.dataset.bind.startsWith("settings."))save();
+    if(t.dataset.bind.startsWith("draft")&&document.getElementById("sum")){const v=S.verwerkingen.find(x=>x.verwerking_id===ui.vw);document.getElementById("sum").innerHTML=summary(v,ui.draft)}
+    if(t.dataset.bind.startsWith("filter.")||t.dataset.bind==="ontv.code"&&false)go(t.id);
+  }
+});
+app.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.sel){ui.sel[t.dataset.sel]=t.checked;return}
+  if(t.dataset.bind&&["lev.steekproef","beslis","hal","lev.locatie","rit.datum"].includes(t.dataset.bind)){/* geen herrender nodig */}
+  if(t.dataset.bind&&t.dataset.bind.startsWith("filter."))go(t.id);
+});
+function go(focusId){save();render();if(focusId){const el=document.getElementById(focusId);if(el){el.focus();if(el.setSelectionRange&&el.type==="text"){const n=el.value.length;el.setSelectionRange(n,n)}}}}
+window.LR={S:()=>S,ui,A,go};
+render();
+</script>
